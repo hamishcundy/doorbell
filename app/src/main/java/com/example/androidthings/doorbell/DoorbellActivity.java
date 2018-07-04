@@ -187,8 +187,6 @@ public class DoorbellActivity extends Activity {
                     Log.i(TAG, "Image upload successful");
                     log.child("timestamp").setValue(ServerValue.TIMESTAMP);
                     log.child("image").setValue(downloadUrl.toString());
-                    // process image annotations
-                    annotateImage(log, imageBytes);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -201,25 +199,5 @@ public class DoorbellActivity extends Activity {
         }
     }
 
-    /**
-     * Process image contents with Cloud Vision.
-     */
-    private void annotateImage(final DatabaseReference ref, final byte[] imageBytes) {
-        mCloudHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "sending image to cloud vision");
-                // annotate image by uploading to Cloud Vision API
-                try {
-                    Map<String, Float> annotations = CloudVisionUtils.annotateImage(imageBytes);
-                    Log.d(TAG, "cloud vision annotations:" + annotations);
-                    if (annotations != null) {
-                        ref.child("annotations").setValue(annotations);
-                    }
-                } catch (IOException e) {
-                    Log.e(TAG, "Cloud Vison API error: ", e);
-                }
-            }
-        });
-    }
+
 }
